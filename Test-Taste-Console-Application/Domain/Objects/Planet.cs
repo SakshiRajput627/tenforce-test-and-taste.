@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Test_Taste_Console_Application.Domain.DataTransferObjects;
 
 namespace Test_Taste_Console_Application.Domain.Objects
@@ -12,7 +13,18 @@ namespace Test_Taste_Console_Application.Domain.Objects
         public ICollection<Moon> Moons { get; set; }
         public double AverageMoonGravity
         {
-            get => 0.0f;
+            get
+            {
+                if (Moons == null || Moons.Count == 0)
+                    return 0.0;
+
+                var validGravities = Moons
+     .Where(m => m.Gravity.HasValue)
+     .Select(m => m.Gravity.Value)
+     .ToList();
+
+                return validGravities.Count > 0 ? validGravities.Average() : 0.0;
+            }
         }
 
         public Planet(PlanetDto planetDto)
